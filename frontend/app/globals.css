@@ -1,0 +1,520 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(0.985 0.004 250);
+  --foreground: oklch(0.18 0.015 250);
+  --card: oklch(0.995 0.004 250);
+  --card-foreground: oklch(0.18 0.015 250);
+  --popover: oklch(0.995 0.004 250);
+  --popover-foreground: oklch(0.18 0.015 250);
+  --primary: oklch(0.6 0.13 250);
+  --primary-foreground: oklch(0.98 0.01 250);
+  --secondary: oklch(0.96 0.01 250);
+  --secondary-foreground: oklch(0.24 0.02 250);
+  --muted: oklch(0.96 0.006 250);
+  --muted-foreground: oklch(0.46 0.02 250);
+  --accent: oklch(0.93 0.01 250);
+  --accent-foreground: oklch(0.24 0.02 250);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --border: oklch(0.9 0.01 250);
+  --input: oklch(0.95 0.01 250);
+  --ring: oklch(0.6 0.13 250);
+  --chart-1: oklch(0.6 0.13 250);
+  --chart-2: oklch(0.7 0.08 250);
+  --chart-3: oklch(0.82 0.05 260);
+  --chart-4: oklch(0.5 0.05 210);
+  --chart-5: oklch(0.9 0.03 250);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.99 0.004 250);
+  --sidebar-foreground: oklch(0.2 0.02 250);
+  --sidebar-primary: oklch(0.6 0.13 250);
+  --sidebar-primary-foreground: oklch(0.98 0.01 250);
+  --sidebar-accent: oklch(0.95 0.01 250);
+  --sidebar-accent-foreground: oklch(0.24 0.02 250);
+  --sidebar-border: oklch(0.9 0.01 250);
+  --sidebar-ring: oklch(0.6 0.13 250);
+}
+
+.dark {
+  --background: oklch(0.14 0.01 260);
+  --foreground: oklch(0.96 0.01 260);
+  --card: oklch(0.18 0.01 260);
+  --card-foreground: oklch(0.96 0.01 260);
+  --popover: oklch(0.18 0.01 260);
+  --popover-foreground: oklch(0.96 0.01 260);
+  --primary: oklch(0.7 0.15 240);
+  --primary-foreground: oklch(0.98 0.01 260);
+  --secondary: oklch(0.22 0.01 260);
+  --secondary-foreground: oklch(0.96 0.01 260);
+  --muted: oklch(0.2 0.01 260);
+  --muted-foreground: oklch(0.72 0.01 260);
+  --accent: oklch(0.24 0.02 260);
+  --accent-foreground: oklch(0.96 0.01 260);
+  --destructive: oklch(0.56 0.22 25);
+  --destructive-foreground: oklch(0.98 0.01 260);
+  --border: oklch(0.28 0.01 260);
+  --input: oklch(0.24 0.01 260);
+  --ring: oklch(0.7 0.15 240);
+  --chart-1: oklch(0.7 0.15 240);
+  --chart-2: oklch(0.76 0.09 250);
+  --chart-3: oklch(0.82 0.06 260);
+  --chart-4: oklch(0.56 0.07 220);
+  --chart-5: oklch(0.86 0.05 240);
+  --sidebar: oklch(0.16 0.01 260);
+  --sidebar-foreground: oklch(0.94 0.01 260);
+  --sidebar-primary: oklch(0.7 0.15 240);
+  --sidebar-primary-foreground: oklch(0.98 0.01 260);
+  --sidebar-accent: oklch(0.2 0.01 260);
+  --sidebar-accent-foreground: oklch(0.96 0.01 260);
+  --sidebar-border: oklch(0.28 0.01 260);
+  --sidebar-ring: oklch(0.7 0.15 240);
+}
+
+@theme inline {
+  --font-sans: var(--font-manrope), var(--font-noto-kr), 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --font-display: var(--font-bebas), var(--font-manrope), var(--font-noto-kr), 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100dvh;
+    background:
+      radial-gradient(circle at 10% 12%, rgba(80, 120, 255, 0.08), transparent 32%),
+      radial-gradient(circle at 90% 6%, rgba(15, 23, 42, 0.04), transparent 40%),
+      linear-gradient(180deg, #ffffff 0%, #f5f6f8 55%, #eef0f4 100%);
+    background-attachment: fixed;
+  }
+}
+
+.dark body {
+  background:
+    radial-gradient(circle at 18% 8%, rgba(48, 96, 255, 0.12), transparent 42%),
+    radial-gradient(circle at 86% 16%, rgba(255, 255, 255, 0.06), transparent 40%),
+    linear-gradient(180deg, #0b0c10 0%, #0f1116 45%, #11131a 100%);
+}
+
+@keyframes comic-pop-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes comic-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.comic-homeboard {
+  background:
+    radial-gradient(circle at 12% 14%, rgba(64, 96, 255, 0.16), transparent 30%),
+    linear-gradient(180deg, rgba(16, 17, 22, 0.98), rgba(18, 20, 26, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+
+
+.comic-halftone {
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.06) 0.8px, transparent 0.8px),
+    radial-gradient(rgba(48, 96, 255, 0.08) 1px, transparent 1px);
+  background-size: 20px 20px, 36px 36px;
+  background-position: 0 0, 12px 16px;
+}
+
+.comic-title {
+  text-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  letter-spacing: -0.01em;
+}
+
+.comic-card {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.4);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.comic-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+}
+
+.comic-icon-wrap {
+  box-shadow: 0 12px 30px rgba(64, 96, 255, 0.35);
+}
+
+.comic-stagger {
+  opacity: 0;
+  animation: comic-pop-in 620ms cubic-bezier(0.22, 0.89, 0.36, 1.24) forwards;
+}
+
+.comic-float {
+  animation: comic-drift 4.4s ease-in-out infinite;
+}
+
+.comic-speech::after {
+  content: "";
+  position: absolute;
+  left: 22px;
+  bottom: -14px;
+  border-width: 14px 12px 0 12px;
+  border-style: solid;
+  border-color: rgba(17, 19, 26, 0.9) transparent transparent transparent;
+}
+
+@media (max-width: 768px) {
+  .comic-homeboard {
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+  }
+
+  .comic-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.webtoon-grid {
+  content-visibility: auto;
+  contain-intrinsic-size: 680px;
+}
+
+.insta-shell {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(16, 18, 24, 0.96), rgba(14, 15, 20, 0.98));
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+
+.insta-story-rail {
+  scrollbar-width: none;
+}
+
+.insta-story-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.insta-card {
+  background: linear-gradient(180deg, rgba(18, 20, 28, 0.98), rgba(14, 16, 22, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.4);
+}
+
+.insta-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.5);
+}
+
+.insta-muted {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.apple-shell {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 246, 250, 0.96));
+  box-shadow: 0 40px 80px rgba(15, 23, 42, 0.12);
+}
+
+.apple-card {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 247, 251, 0.98));
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.apple-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 26px 65px rgba(15, 23, 42, 0.18);
+}
+
+.apple-chip {
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.apple-image-ring {
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.08), 0 12px 30px rgba(15, 23, 42, 0.14);
+}
+
+.insta-chip {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.insta-focus-ring {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.16), 0 0 0 3px rgba(64, 96, 255, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .comic-stagger,
+  .comic-float {
+    animation: none;
+  }
+}
+
+.netflix-theme {
+  --background: oklch(0.12 0.01 260);
+  --foreground: oklch(0.95 0.01 260);
+  --card: oklch(0.16 0.01 260);
+  --card-foreground: oklch(0.95 0.01 260);
+  --popover: oklch(0.16 0.01 260);
+  --popover-foreground: oklch(0.95 0.01 260);
+  --primary: oklch(0.62 0.22 27);
+  --primary-foreground: oklch(0.98 0.01 260);
+  --secondary: oklch(0.2 0.01 260);
+  --secondary-foreground: oklch(0.92 0.01 260);
+  --muted: oklch(0.2 0.01 260);
+  --muted-foreground: oklch(0.72 0.01 260);
+  --accent: oklch(0.24 0.02 260);
+  --accent-foreground: oklch(0.96 0.01 260);
+  --border: oklch(0.24 0.01 260);
+  --input: oklch(0.22 0.01 260);
+  --ring: oklch(0.62 0.22 27);
+  background:
+    radial-gradient(circle at 12% 12%, rgba(229, 9, 20, 0.18), transparent 38%),
+    radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0.05), transparent 45%),
+    linear-gradient(180deg, #0b0b0b 0%, #121212 55%, #0b0b0b 100%);
+  color: var(--foreground);
+  min-height: 100dvh;
+}
+
+.netflix-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.12em;
+}
+
+.netflix-shell {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(18, 18, 18, 0.96), rgba(12, 12, 12, 0.98));
+  box-shadow: 0 35px 90px rgba(0, 0, 0, 0.6);
+}
+
+.netflix-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(20, 20, 20, 0.98), rgba(12, 12, 12, 0.98));
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.55);
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+.netflix-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(229, 9, 20, 0.45);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+}
+
+.netflix-chip {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(28, 28, 28, 0.9);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.netflix-badge {
+  background: #e50914;
+  color: #ffffff;
+  box-shadow: 0 10px 30px rgba(229, 9, 20, 0.4);
+}
+
+.netflix-image-ring {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 18px 45px rgba(0, 0, 0, 0.55);
+}
+
+.netflix-hero-overlay {
+  background: linear-gradient(120deg, rgba(229, 9, 20, 0.22), rgba(0, 0, 0, 0.0) 55%),
+    radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.08), transparent 60%);
+  mix-blend-mode: screen;
+}
+
+.netflix-title-glow {
+  text-shadow: 0 0 18px rgba(229, 9, 20, 0.5), 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+.netflix-thumb {
+  transform: translateZ(0);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.6);
+}
+
+.netflix-tilt {
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.netflix-tilt:hover {
+  transform: scale(1.04) rotateX(2deg) rotateY(-2deg);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.75);
+}
+
+.netflix-vignette {
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+.netflix-home {
+  width: min(1400px, 100%);
+  margin: 0 auto;
+  padding: 0 20px 80px;
+}
+
+.netflix-hero {
+  position: relative;
+  height: clamp(320px, 52vw, 560px);
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 35px 90px rgba(0, 0, 0, 0.6);
+}
+
+.netflix-hero-content {
+  position: absolute;
+  left: clamp(20px, 6vw, 80px);
+  bottom: clamp(20px, 8vw, 90px);
+  z-index: 2;
+}
+
+.netflix-hero-button {
+  border: 1px solid rgba(229, 9, 20, 0.6);
+  background: #e50914;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+}
+
+.netflix-hero-button:hover {
+  background: #f6121d;
+}
+
+.netflix-hero-button-secondary {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.4);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+}
+
+.netflix-hero-button-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.netflix-hero-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 58px;
+  height: 58px;
+  border: 2px solid #e50914;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.25);
+  color: #e50914;
+  font-size: 28px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.netflix-hero-arrow:hover {
+  background: rgba(229, 9, 20, 0.12);
+}
+
+.netflix-rows {
+  margin-top: clamp(26px, 6vw, 46px);
+  display: grid;
+  gap: 32px;
+}
+
+.netflix-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.netflix-row-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(240px, 320px);
+  gap: 18px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scrollbar-width: none;
+}
+
+.netflix-row-track::-webkit-scrollbar {
+  display: none;
+}
+
+.netflix-row-card {
+  min-width: 240px;
+}
+
+@media (max-width: 768px) {
+  .netflix-home {
+    padding: 0 14px 60px;
+  }
+
+  .netflix-row-track {
+    grid-auto-columns: minmax(220px, 260px);
+  }
+}
