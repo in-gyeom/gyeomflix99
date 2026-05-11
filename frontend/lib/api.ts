@@ -9,7 +9,12 @@ export const API_BASE_URL = (() => {
   }
 
   if (typeof window !== "undefined") {
-    return DEFAULT_API_BASE_URL
+    const { hostname } = window.location
+    if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1") {
+      return DEFAULT_API_BASE_URL
+    }
+
+    return ""
   }
 
   return process.env.API_BASE_URL?.trim().replace(/\/$/, "") || DEFAULT_API_BASE_URL
