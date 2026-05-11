@@ -1,20 +1,40 @@
 import type { ArtProgress, Comment, Genre, Profile } from "@/lib/types"
 
 const DEFAULT_API_BASE_URL = "http://127.0.0.1:5000"
+const LOCAL_HOSTNAMES = new Set(["localhost", "127.0.0.1", "::1"])
+
+function isLocalHost(hostname: string) {
+  return LOCAL_HOSTNAMES.has(hostname)
+}
+
+function isLocalBaseUrl(baseUrl: string) {
+  try {
+    return isLocalHost(new URL(baseUrl).hostname)
+  } catch {
+    return false
+  }
+}
 
 export const API_BASE_URL = (() => {
   const explicitBase = process.env.NEXT_PUBLIC_API_BASE_URL?.trim()
-  if (explicitBase) {
-    return explicitBase.replace(/\/$/, "")
-  }
 
   if (typeof window !== "undefined") {
     const { hostname } = window.location
-    if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1") {
-      return DEFAULT_API_BASE_URL
+    const isLocalPage = isLocalHost(hostname)
+
+    if (explicitBase) {
+      if (!isLocalPage && isLocalBaseUrl(explicitBase)) {
+        return ""
+      }
+
+      return explicitBase.replace(/\/$/, "")
     }
 
-    return ""
+    return isLocalPage ? DEFAULT_API_BASE_URL : ""
+  }
+
+  if (explicitBase) {
+    return explicitBase.replace(/\/$/, "")
   }
 
   return process.env.API_BASE_URL?.trim().replace(/\/$/, "") || DEFAULT_API_BASE_URL
