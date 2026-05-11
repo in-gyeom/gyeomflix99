@@ -228,6 +228,7 @@ export default function HomePage() {
     if (key === "feature2") feature2InputRef.current?.click()
   }
 
+
   const heroSlides = [
     {
       src: heroImages.feature || "/sonagi-hero.png.png",
@@ -400,40 +401,6 @@ export default function HomePage() {
           <p className="netflix-display netflix-title-glow text-xs font-semibold uppercase tracking-[0.45em] text-[#e50914]">
             Portfolio
           </p>
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              onClick={() => triggerInput("feature")}
-              className="netflix-hero-button"
-            >
-              대표 이미지 선택
-            </button>
-            {heroImages.feature && (
-              <button
-                type="button"
-                onClick={() => handleHeroImageRemove("feature")}
-                className="netflix-hero-button-secondary"
-              >
-                제거
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => triggerInput("feature2")}
-              className="netflix-hero-button"
-            >
-              두 번째 이미지 선택
-            </button>
-            {heroImages.feature2 && (
-              <button
-                type="button"
-                onClick={() => handleHeroImageRemove("feature2")}
-                className="netflix-hero-button-secondary"
-              >
-                제거
-              </button>
-            )}
-          </div>
           <input
             ref={featureInputRef}
             type="file"
@@ -512,32 +479,6 @@ export default function HomePage() {
                         자세히 보기
                         <Sparkles className="size-4" />
                       </span>
-                      {category.heroImage && category.id !== "profile" && (
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault()
-                              triggerInput(category.id as HeroKey)
-                            }}
-                            className="text-xs font-semibold text-white/80 hover:text-white"
-                          >
-                            대표 이미지 선택
-                          </button>
-                          {heroImages[category.id as HeroKey] && (
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault()
-                                handleHeroImageRemove(category.id as HeroKey)
-                              }}
-                              className="text-xs text-white/60 hover:text-white"
-                            >
-                              제거
-                            </button>
-                          )}
-                        </div>
-                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -693,6 +634,7 @@ export default function HomePage() {
           )}
         </DialogContent>
       </Dialog>
+
     </section>
   )
 }

@@ -239,6 +239,54 @@ app.post("/api/genres", (req, res) => {
   res.status(201).json({ genre });
 });
 
+app.put("/api/genres/:id", (req, res) => {
+  const id = typeof req.params.id === "string" ? req.params.id.trim() : "";
+
+  if (!id) {
+    return res.status(400).json({ error: "id 값이 필요합니다." });
+  }
+
+  const { title, category, description, thumbnail_url } = req.body || {};
+
+  if (title !== undefined && (typeof title !== "string" || !title.trim())) {
+    return res.status(400).json({ error: "title은 비어있지 않은 문자열이어야 합니다." });
+  }
+
+  if (category !== undefined && (typeof category !== "string" || !GENRE_CATEGORIES.has(category))) {
+    return res.status(400).json({ error: "category 값이 올바르지 않습니다." });
+  }
+
+  if (description !== undefined && description !== null && typeof description !== "string") {
+    return res.status(400).json({ error: "description은 문자열 또는 null이어야 합니다." });
+  }
+
+  if (thumbnail_url !== undefined && thumbnail_url !== null && typeof thumbnail_url !== "string") {
+    return res.status(400).json({ error: "thumbnail_url은 문자열 또는 null이어야 합니다." });
+  }
+
+  const store = readStore();
+  const genreIndex = store.genres.findIndex((genre) => genre.id === id);
+
+  if (genreIndex === -1) {
+    return res.status(404).json({ error: "작품을 찾을 수 없습니다." });
+  }
+
+  const existing = store.genres[genreIndex];
+  const now = nowIso();
+  const updated = {
+    ...existing,
+    title: title !== undefined ? title.trim() : existing.title,
+    category: category !== undefined ? category : existing.category,
+    description: description !== undefined ? (description?.trim() || null) : existing.description,
+    thumbnail_url: thumbnail_url !== undefined ? thumbnail_url : existing.thumbnail_url,
+    updated_at: now,
+  };
+
+  store.genres[genreIndex] = updated;
+  writeStore(store);
+  res.json({ genre: updated });
+});
+
 app.delete("/api/genres/:id", (req, res) => {
   const id = typeof req.params.id === "string" ? req.params.id.trim() : "";
 

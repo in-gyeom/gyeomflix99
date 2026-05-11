@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 
-const ADMIN_PASSWORD = "0922"
+const ADMIN_PASSWORD = "00000"
 
 interface AdminPasswordDialogProps {
   open: boolean

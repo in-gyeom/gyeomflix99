@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
-import { Plus, Upload, X, ImageIcon, Sparkles, Trash2 } from "lucide-react"
+import { Edit, Plus, Upload, X, ImageIcon, Sparkles, Trash2 } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { API_BASE_URL } from "@/lib/api"
 import { GENRE_CATEGORIES, type Genre, type Comment } from "@/lib/types"
@@ -55,6 +55,8 @@ export function GenreContent({ initialGenres, initialComments }: GenreContentPro
   const [detailLoading, setDetailLoading] = useState(false)
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [showPasswordDialog, setShowPasswordDialog] = useState(false)
+  const [showEditThumbnailDialog, setShowEditThumbnailDialog] = useState(false)
+  const [showEditThumbnailPasswordDialog, setShowEditThumbnailPasswordDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [showDeletePasswordDialog, setShowDeletePasswordDialog] = useState(false)
   const [deleteTargetId, setDeleteTargetId] = useState("")
@@ -70,6 +72,10 @@ export function GenreContent({ initialGenres, initialComments }: GenreContentPro
   const [thumbnailFocus, setThumbnailFocus] = useState<ThumbnailFocus>({
     ...DEFAULT_THUMBNAIL_FOCUS,
   })
+  const [editThumbnailSourceIndex, setEditThumbnailSourceIndex] = useState(0)
+  const [editThumbnailFocus, setEditThumbnailFocus] = useState<ThumbnailFocus>({
+    ...DEFAULT_THUMBNAIL_FOCUS,
+  })
 
   useEffect(() => {
     setActiveTab(getDefaultTab(searchParams.get("category")))
@@ -83,6 +89,7 @@ export function GenreContent({ initialGenres, initialComments }: GenreContentPro
   const [isUploading, setIsUploading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isUpdatingThumbnail, setIsUpdatingThumbnail] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleAddClick = () => {
@@ -93,6 +100,11 @@ export function GenreContent({ initialGenres, initialComments }: GenreContentPro
     setShowDeletePasswordDialog(true)
   }
 
+  const handleEditThumbnailClick = () => {
+    if (!selectedGenre) return
+    setShowEditThumbnailPasswordDialog(true)
+  }
+
   const handlePasswordSuccess = () => {
     setShowAddDialog(true)
   }
@@ -100,6 +112,16 @@ export function GenreContent({ initialGenres, initialComments }: GenreContentPro
   const handleDeletePasswordSuccess = () => {
     setDeleteTargetId(genres[0]?.id ?? "")
     setShowDeleteDialog(true)
+  }
+
+  const handleEditThumbnailPasswordSuccess = () => {
+    if (!selectedGenre) return
+    const currentIndex = selectedGenre.thumbnail_url
+      ? selectedGenre.images.findIndex((url) => url === selectedGenre.thumbnail_url)
+      : 0
+    setEditThumbnailSourceIndex(currentIndex >= 0 ? currentIndex : 0)
+    setEditThumbnailFocus({ ...DEFAULT_THUMBNAIL_FOCUS })
+    setShowEditThumbnailDialog(true)
   }
 
   const clampPercent = (value: number) => {
@@ -288,6 +310,17 @@ export function GenreContent({ initialGenres, initialComments }: GenreContentPro
     })
   }
 
+  const handleEditThumbnailPreviewClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+
+    setEditThumbnailFocus({
+      x: clampPercent(x),
+      y: clampPercent(y),
+    })
+  }
+
   const handleSave = async () => {
     if (!title.trim() || uploadedImages.length === 0) return
 
@@ -334,6 +367,54 @@ export function GenreContent({ initialGenres, initialComments }: GenreContentPro
       console.error("Save error:", error)
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  const handleUpdateThumbnail = async () => {
+    if (!selectedGenre || selectedGenre.images.length === 0) return
+
+    setIsUpdatingThumbnail(true)
+    try {
+      const sourceIndex = Math.min(editThumbnailSourceIndex, selectedGenre.images.length - 1)
+      const thumbnailSource = selectedGenre.images[sourceIndex] || selectedGenre.images[0]
+      let thumbnailUrl = thumbnailSource
+
+      try {
+        thumbnailUrl = await createThumbnailDataUrl(thumbnailSource, editThumbnailFocus)
+      } catch (error) {
+        console.error("Thumbnail generation error:", error)
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/genres/${selectedGenre.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          thumbnail_url: thumbnailUrl,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        const message = errorText || "썸네일 저장에 실패했습니다."
+        throw new Error(message)
+      }
+
+      const payload = (await response.json()) as { genre?: Genre }
+      if (payload.genre) {
+        setGenres((prev) => prev.map((genre) =>
+          genre.id === payload.genre?.id ? (payload.genre as Genre) : genre,
+        ))
+        setSelectedGenre((prev) =>
+          prev?.id === payload.genre?.id ? (payload.genre as Genre) : prev,
+        )
+        setShowEditThumbnailDialog(false)
+      }
+    } catch (error) {
+      console.error("Thumbnail update error:", error)
+    } finally {
+      setIsUpdatingThumbnail(false)
     }
   }
 
@@ -515,13 +596,22 @@ export function GenreContent({ initialGenres, initialComments }: GenreContentPro
         <DialogContent className="h-[100dvh] max-h-[100dvh] w-[100vw] max-w-[100vw] overflow-y-auto border-0 bg-[#0b0b0b] px-0 text-white sm:px-0">
           {selectedGenre && (
             <>
-              <DialogHeader>
+              <DialogHeader className="gap-3 sm:flex sm:flex-row sm:items-center sm:justify-between">
                 <DialogTitle className="flex items-center gap-2 text-3xl text-white">
                   {selectedGenre.title}
                   <span className="rounded-full bg-[#e50914] px-2 py-0.5 text-sm font-normal text-white">
                     {getCategoryLabel(selectedGenre.category)}
                   </span>
                 </DialogTitle>
+                {selectedGenre.images.length > 0 && (
+                  <Button
+                    onClick={handleEditThumbnailClick}
+                    className="border border-white/15 bg-[#1f1f1f] text-white/80 hover:bg-[#2a2a2a]"
+                  >
+                    <Edit className="mr-2 size-4" />
+                    썸네일 편집
+                  </Button>
+                )}
               </DialogHeader>
 
               {/* Webtoon Scroll View */}
@@ -570,6 +660,134 @@ export function GenreContent({ initialGenres, initialComments }: GenreContentPro
               />
             </>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Thumbnail Dialog */}
+      <Dialog
+        open={showEditThumbnailDialog}
+        onOpenChange={(open) => {
+          setShowEditThumbnailDialog(open)
+          if (!open) {
+            setEditThumbnailSourceIndex(0)
+            setEditThumbnailFocus({ ...DEFAULT_THUMBNAIL_FOCUS })
+          }
+        }}
+      >
+        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto border border-white/10 bg-[#0f0f0f] text-white">
+          <DialogHeader>
+            <DialogTitle className="text-3xl text-white">썸네일 편집</DialogTitle>
+          </DialogHeader>
+
+          {selectedGenre && selectedGenre.images.length > 0 ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-3 gap-2">
+                {selectedGenre.images.map((url, index) => (
+                  <div
+                    key={`${selectedGenre.id}-thumb-${index}`}
+                    className={`group relative aspect-square cursor-pointer overflow-hidden rounded-md border ${
+                      index === editThumbnailSourceIndex
+                        ? "border-[#e50914]"
+                        : "border-white/10"
+                    }`}
+                    onClick={() => {
+                      setEditThumbnailSourceIndex(index)
+                      setEditThumbnailFocus({ ...DEFAULT_THUMBNAIL_FOCUS })
+                    }}
+                  >
+                    <Image
+                      src={url}
+                      alt={`썸네일 후보 ${index + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                    {index === editThumbnailSourceIndex && (
+                      <span className="absolute bottom-1 left-1 rounded bg-[#e50914] px-1.5 py-0.5 text-xs text-white">
+                        선택됨
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-3 rounded-lg border border-white/10 bg-[#141414] p-3">
+                <p className="text-sm text-white/80">
+                  썸네일 위치 선택 (미리보기를 클릭하거나 슬라이더로 조정)
+                </p>
+
+                <div
+                  className="relative mx-auto aspect-square w-full max-w-xs cursor-crosshair overflow-hidden rounded-md border border-white/10 bg-black"
+                  onClick={handleEditThumbnailPreviewClick}
+                >
+                  <Image
+                    src={selectedGenre.images[editThumbnailSourceIndex] || selectedGenre.images[0]}
+                    alt="썸네일 미리보기"
+                    fill
+                    className="object-cover"
+                    style={{
+                      objectPosition: `${editThumbnailFocus.x}% ${editThumbnailFocus.y}%`,
+                    }}
+                  />
+                  <div className="pointer-events-none absolute left-1/2 top-1/2 size-5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/90 bg-black/30" />
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label className="space-y-1 text-xs text-white/60">
+                    가로 위치 {Math.round(editThumbnailFocus.x)}%
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={editThumbnailFocus.x}
+                      onChange={(e) =>
+                        setEditThumbnailFocus((prev) => ({
+                          ...prev,
+                          x: Number(e.target.value),
+                        }))
+                      }
+                      className="w-full"
+                    />
+                  </label>
+
+                  <label className="space-y-1 text-xs text-white/60">
+                    세로 위치 {Math.round(editThumbnailFocus.y)}%
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={editThumbnailFocus.y}
+                      onChange={(e) =>
+                        setEditThumbnailFocus((prev) => ({
+                          ...prev,
+                          y: Number(e.target.value),
+                        }))
+                      }
+                      className="w-full"
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <p className="text-white/60">썸네일을 선택할 이미지가 없습니다.</p>
+          )}
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowEditThumbnailDialog(false)}
+              className="border border-white/15 bg-transparent text-white hover:bg-white/10"
+            >
+              취소
+            </Button>
+            <Button
+              onClick={handleUpdateThumbnail}
+              disabled={isUpdatingThumbnail || !selectedGenre || selectedGenre.images.length === 0}
+              className="border border-[#e50914]/60 bg-[#e50914] text-white hover:bg-[#f6121d]"
+            >
+              {isUpdatingThumbnail ? "저장 중..." : "저장"}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -826,6 +1044,13 @@ export function GenreContent({ initialGenres, initialComments }: GenreContentPro
         onOpenChange={setShowPasswordDialog}
         onSuccess={handlePasswordSuccess}
         description="게시글을 등록하려면 관리자 비밀번호를 입력하세요."
+      />
+
+      <AdminPasswordDialog
+        open={showEditThumbnailPasswordDialog}
+        onOpenChange={setShowEditThumbnailPasswordDialog}
+        onSuccess={handleEditThumbnailPasswordSuccess}
+        description="썸네일을 변경하려면 관리자 비밀번호를 입력하세요."
       />
 
       <AdminPasswordDialog

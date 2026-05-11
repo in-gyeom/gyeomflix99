@@ -9,7 +9,7 @@ export const API_BASE_URL = (() => {
   }
 
   if (typeof window !== "undefined") {
-    return window.location.origin
+    return DEFAULT_API_BASE_URL
   }
 
   return process.env.API_BASE_URL?.trim().replace(/\/$/, "") || DEFAULT_API_BASE_URL
