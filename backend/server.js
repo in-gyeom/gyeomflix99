@@ -480,6 +480,11 @@ if (fs.existsSync(FRONTEND_DIST_DIR)) {
       return;
     }
 
+    if (path.extname(req.path)) {
+      res.status(404).type("text/plain").send("Not found");
+      return;
+    }
+
     if (!req.accepts("html") || !FRONTEND_INDEX_FILE) {
       next();
       return;
