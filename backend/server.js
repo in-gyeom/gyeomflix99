@@ -34,6 +34,12 @@ function resolveFrontendDistDir() {
 const FRONTEND_DIST_DIR = resolveFrontendDistDir();
 const FRONTEND_INDEX_FILE = FRONTEND_DIST_DIR ? path.join(FRONTEND_DIST_DIR, "index.html") : null;
 
+if (!FRONTEND_INDEX_FILE) {
+  throw new Error(
+    "Frontend dist not found. Build the frontend export and copy it into backend/dist before starting the server.",
+  );
+}
+
 // 미들웨어 설정
 app.use(cors());
 app.use(express.json({ limit: "100mb" }));
