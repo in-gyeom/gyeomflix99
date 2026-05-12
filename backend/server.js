@@ -480,7 +480,24 @@ if (fs.existsSync(FRONTEND_DIST_DIR)) {
       return;
     }
 
+    if (req.path.endsWith(".__PAGE__.txt")) {
+      const rewrittenPath = req.path.replace(/\.(__PAGE__)\.txt$/, ".txt");
+      const rewrittenFile = path.join(FRONTEND_DIST_DIR, rewrittenPath);
+
+      if (fs.existsSync(rewrittenFile)) {
+        res.type("text/plain").sendFile(rewrittenFile);
+        return;
+      }
+    }
+
     if (path.extname(req.path)) {
+      const staticFile = path.join(FRONTEND_DIST_DIR, req.path);
+
+      if (fs.existsSync(staticFile)) {
+        res.sendFile(staticFile);
+        return;
+      }
+
       res.status(404).type("text/plain").send("Not found");
       return;
     }

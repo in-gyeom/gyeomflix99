@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Bebas_Neue, Manrope, Noto_Sans_KR } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
 import Image from 'next/image'
 import Link from 'next/link'
 import './globals.css'
@@ -64,7 +63,6 @@ export default function RootLayout({
         <main className="flex-1 px-6 py-8 md:px-10">
           {children}
         </main>
-        <Analytics />
       </body>
     </html>
   )
